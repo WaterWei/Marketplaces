@@ -1,16 +1,16 @@
 {
   "name": "marketplaces-collection",
   "owner": {
-    "name": "WaterWei"
+    "name": "Water"
   },
   "metadata": {
-    "description": "Marketplaces 技能集合 — BMAD 敏捷方法论技能与 PPT/文档转换工具技能，适用于 Claude Code"
+    "description": "个人Marketplaces 技能集合"
   },
   "plugins": [
     {
       "name": "marketplaces-skills",
       "source": "./",
-      "description": "BMAD 敏捷方法论技能（可配置故事交付流水线）及 PPT/文档转换工具技能",
+      "description": "skills技能武器库",
       "homepage": "https://github.com/WaterWei/Marketplaces",
       "license": "MIT",
       "keywords": ["bmad", "agile", "ai-driven", "pipeline", "ppt", "presentation", "marketplace", "skills"]
