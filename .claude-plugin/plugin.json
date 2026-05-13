@@ -1,8 +1,8 @@
 {
   "name": "marketplaces-skills",
   "version": "1.0.0",
-  "description": "Marketplaces 技能集合 — BMAD 敏捷方法论技能与 PPT/文档转换工具技能，适用于 Claude Code",
-  "author": "WaterWei",
+  "description": "个人Marketplaces 技能集合",
+  "author": "Water",
   "homepage": "https://github.com/WaterWei/Marketplaces",
   "skills": ["./.claude/skills/", "./skills/"],
   "keywords": ["bmad", "agile", "ai-driven", "pipeline", "ppt", "presentation", "marketplace", "skills"]
