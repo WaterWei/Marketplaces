@@ -1,0 +1,63 @@
+# doc-to-ppt-json 配置文件
+#
+# 三层配置优先级：基础(此文件) < 团队(custom/doc-to-ppt-json.toml) < 个人(custom/doc-to-ppt-json.user.toml)
+
+[workflow]
+
+activation_steps_prepend = []
+activation_steps_append = []
+persistent_facts = [
+  "file:{project-root}/**/project-context.md",
+]
+on_complete = ""
+
+# ──────────────────────────────────────────────
+# 分片配置
+# ──────────────────────────────────────────────
+
+[split]
+
+# subagent 最大并发数
+max_concurrency = 3
+
+# 输出目录（相对于 project-root）
+output_dir = "_bmad-output/doc-to-ppt-json"
+
+# ──────────────────────────────────────────────
+# 文档分段类型定义
+#
+# 每个 type 代表文档中的一种逻辑分段：
+#   pattern     — 匹配 Markdown 标题的正则（匹配 #/##/### 等标题行）
+#   level       — 层级权重（数字越小越"顶层"，用于确定分段边界）
+#   layout_hint — 建议 subagent 使用的 PPT 布局类型
+#
+# section_order 定义匹配优先级（从高到低），脚本从上到下扫描，
+# 第一个匹配的 type 决定该分段的类型。
+# ──────────────────────────────────────────────
+
+section_order = ["cover", "toc", "phase", "main_ladder", "sub_ladder"]
+
+[split.section_types.cover]
+pattern = "^#\\s+(?!第.+阶段).+"
+level = 1
+layout_hint = "cover"
+
+[split.section_types.toc]
+pattern = "^##\\s+第.+部分.*目录"
+level = 2
+layout_hint = "list"
+
+[split.section_types.phase]
+pattern = "^#\\s+第.+阶段"
+level = 1
+layout_hint = "cover"
+
+[split.section_types.main_ladder]
+pattern = "^##\\s+主梯\\s+\\d+"
+level = 2
+layout_hint = "content"
+
+[split.section_types.sub_ladder]
+pattern = "^###\\s+\\d+-\\d+\\s+梯"
+level = 3
+layout_hint = "content"

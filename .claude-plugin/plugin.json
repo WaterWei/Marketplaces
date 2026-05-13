@@ -4,6 +4,6 @@
   "description": "个人Marketplaces 技能集合",
   "author": "Water",
   "homepage": "https://github.com/WaterWei/Marketplaces",
-  "skills": ["./.claude/skills/", "./skills/"],
+  "skills": [ "./skills/"],
   "keywords": ["bmad", "agile", "ai-driven", "pipeline", "ppt", "presentation", "marketplace", "skills"]
 }

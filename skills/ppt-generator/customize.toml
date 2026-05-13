@@ -1,0 +1,110 @@
+# ============================================================
+# PPT Generator — 工作流自定义配置
+# ============================================================
+#
+# 这个文件控制 ppt-generator skill 的行为。你可以：
+#
+#   1. 直接编辑本文件（影响所有人）
+#   2. 创建团队覆盖：{project-root}/_bmad/custom/ppt-generator.toml
+#   3. 创建个人覆盖：{project-root}/_bmad/custom/ppt-generator.user.toml
+#
+# 覆盖规则（优先级从低到高）：
+#   skill 默认值 → 团队覆盖 → 个人覆盖
+#
+#   - 标量值（string/number/bool）：高优先级直接覆盖低优先级
+#   - 数组：高优先级追加到低优先级后面
+#   - 带 code/id 键的表数组：按 key 匹配替换，新 key 追加
+#
+# ============================================================
+
+[workflow]
+
+# --- 激活前步骤 ---
+# 在 skill 启动（加载配置、问候用户）之前执行的步骤。
+# 用于预加载上下文、合规检查等。
+# 示例：
+#   activation_steps_prepend = ["load-team-branding.md"]
+
+activation_steps_prepend = []
+
+# --- 激活后步骤 ---
+# 在问候用户之后、正式开始工作流之前执行的步骤。
+# 用于加载额外上下文。
+# 示例：
+#   activation_steps_append = ["load-company-template.md"]
+
+activation_steps_append = []
+
+# --- 持久化事实 ---
+# 整个工作流期间始终牢记的约束/规范。
+# 每条可以是：
+#   - 字面文本：直接作为事实
+#   - 文件引用（file: 前缀）：读取文件内容作为事实，支持 glob
+#
+# 示例：
+#   persistent_facts = [
+#     "所有幻灯片必须使用中文",
+#     "eyebrow 标签必须使用英文大写",
+#     "每张卡片的 description 不超过 50 字",
+#     "file:{project-root}/docs/presentation-guidelines.md",
+#   ]
+
+persistent_facts = []
+
+# --- 完成后行为 ---
+# 工作流完成后自动执行的动作。
+# 示例：
+#   on_complete = "自动启动 bun run dev 预览"
+#   on_complete = "将文件路径复制到剪贴板"
+
+on_complete = ""
+
+# ============================================================
+# 高级自定义：覆盖步骤文件
+# ============================================================
+#
+# 如果你需要修改某个步骤的行为，可以创建覆盖文件。
+#
+# 例如，要自定义 Step 2 的布局选择逻辑：
+#   1. 创建 _bmad/custom/ppt-generator-step-02-analyze.md
+#   2. 在其中写入你的自定义指令
+#   3. 在 activation_steps_append 中引用它
+#
+# ============================================================
+
+# ============================================================
+# 常见自定义场景示例
+# ============================================================
+#
+# 【场景 1】强制所有演示使用统一模板
+#
+#   persistent_facts = [
+#     "第一张必须是 cover，eyebrow 为空",
+#     "最后一张必须是 cover，title 为「谢谢」",
+#     "所有演示必须包含 Q&A 页（layout: content, eyebrow: Q&A）",
+#     "cards 布局的卡片数量必须是 3 个",
+#   ]
+#
+# 【场景 2】限制可用的布局类型
+#
+#   persistent_facts = [
+#     "只使用以下布局：cover, cards, list, content",
+#     "不使用 code 和 table 布局（受众非技术人员）",
+#   ]
+#
+# 【场景 3】统一品牌风格
+#
+#   persistent_facts = [
+#     "eyebrow 标签使用公司命名规范：PRODUCT / TECH / TEAM",
+#     "封面 description 格式：部门名 · 年份",
+#     "file:{project-root}/docs/brand-terms.md",
+#   ]
+#
+# 【场景 4】接入公司演讲模板
+#
+#   activation_steps_append = ["load-company-slides-template.md"]
+#   persistent_facts = [
+#     "file:{project-root}/docs/slide-template.json",
+#   ]
+#
+# ============================================================
