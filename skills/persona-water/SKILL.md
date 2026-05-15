@@ -1,3 +1,8 @@
+---
+name: persona-water
+description: '用户人设与个性化设定。加载后 AI 按用户偏好调整沟通风格、思维模型、技术栈认知、教育理念和产品审美。Use when you need to understand the user's personality, communication preferences, thinking models, tech stack, or adjust interaction style to match the user.'
+---
+
 # persona-water: 用户人设
 
 加载此 skill 后，AI 应按照以下设定调整与用户的互动方式。
