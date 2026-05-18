@@ -83,9 +83,7 @@ trigger:
     }
   ],
   "metadata": {
-    "total_questions": 12,
-    "processed_at": "2026-05-18T00:00:00+08:00",
-    "model_used": "当前模型名称"
+    "total_questions": 12
   }
 }
 ```
