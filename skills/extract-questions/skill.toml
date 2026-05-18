@@ -1,0 +1,3 @@
+name = "extract-questions"
+version = "1.0.0"
+description = "AI 工作流：逐张处理题目图片，提取题目文本和知识点，输出结构化 JSON"
