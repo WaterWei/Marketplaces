@@ -1,0 +1,4 @@
+interface:
+  display_name: "BMAD Story Pipeline"
+  short_description: "Run BMAD story delivery with subagents"
+  default_prompt: "Use $bmad-story-pipeline to deliver the next BMAD story with Codex worker subagents for each stage."
