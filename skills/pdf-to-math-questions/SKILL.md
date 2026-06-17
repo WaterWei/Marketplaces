@@ -198,14 +198,107 @@ D. 上传图片
 
 > **注意**：`题目图片` 是附件字段，不能通过 JSON 直接写入。必须先创建记录，再用 `+record-upload-attachment --field-id "题目图片"` 上传。
 
+## ⚠️ 硬性规则（违反会导致数据不完整）
+
+### 规则 1：禁止自定义简化 Schema
+
+**绝对不要**为 subagent 创建新的输出格式定义文件（如 `parse-prompt.md`）。
+所有题目解析的 prompt **必须**直接引用 `references/subagent-prompt.md` 中的 **Step 3 模板**。
+
+原因：Step 3 模板已定义完整字段（answer, knowledge_points, difficulty, has_determinable_answer 等），
+自定义简化版会导致大量字段缺失。
+
+### 规则 2：batch 写入必须覆盖 base-schema.md 的全部必填字段
+
+生成 `+record-batch-create` 的 rows 时，**必须**对照 `references/base-schema.md` 表 2 的字段列表，
+确保以下字段全部写入：
+
+| 字段 | 必填 | 来源 |
+|------|------|------|
+| `题干` | 是 | subagent → question_text |
+| `题型` | 是 | subagent → question_type |
+| `选项` | 否 | subagent 提取的 ABCD 选项文本 |
+| `答案` | 否 | subagent → answer |
+| `解析` | 否 | subagent 提取的解题过程 |
+| `有确定解` | 是 | subagent → has_determinable_answer |
+| `难度` | 是 | subagent → difficulty（1-5） |
+| `知识点` | 否 | subagent → knowledge_points |
+| `知识点标签` | 否 | subagent 匹配 class-point.json |
+| `思想标签` | 否 | subagent 匹配 method.json |
+| `模型标签` | 否 | subagent 匹配 model.json |
+| `所属章节` | 否 | 根据 section_title 匹配 chapter-map.json |
+| `年级` | 是 | 从封面解析 |
+| `学期` | 是 | 从封面解析 |
+| `来源` | 是 | PDF 文件名 |
+| `页码` | 是 | 当前页号 |
+| `状态` | 否 | 默认 "待审核" |
+
+**检查方法**：batch 写入前，用以下脚本验证字段完整性：
+
+```bash
+# 验证 batch JSON 包含所有必填字段
+python3 -c "
+import json, sys
+REQUIRED = ['题干', '题型', '有确定解', '难度', '年级', '学期', '来源', '页码']
+batch = json.load(open(sys.argv[1]))
+fields = batch.get('fields', [])
+missing = [f for f in REQUIRED if f not in fields]
+if missing:
+    print(f'ERROR: missing fields: {missing}')
+    sys.exit(1)
+print(f'OK: {len(fields)} fields, {len(batch[\"rows\"])} rows')
+" batch_1.json
+```
+
+### 规则 3：subagent prompt 必须包含完整输出字段列表
+
+构造 subagent prompt 时，输出格式部分**必须**包含以下全部字段：
+
+```json
+{
+  "id": "Q{page}_{seq}",
+  "source_page": N,
+  "question_text": "完整题干（含 LaTeX）",
+  "question_type": "选择题|填空题|解答题|计算题|应用题",
+  "options": "A. xxx\nB. xxx\nC. xxx\nD. xxx",
+  "answer": "C",
+  "analysis": "解题过程...",
+  "has_determinable_answer": true,
+  "difficulty": 2,
+  "knowledge_points": ["垂线", "垂直定义"],
+  "knowledge_point_tags": ["平行线"],
+  "thinking_tags": ["数形结合"],
+  "model_tags": ["直线、线段、交点或角的数量问题"],
+  "section_title": "知识点 1 垂直",
+  "images": ["imgs/img_in_image_box_xxx.jpg"]
+}
+```
+
+**不要**删除或简化上述任何字段。即使某个字段暂时无法提取，
+也要在输出中保留该字段（值为 null 或空数组）。
+
+### 规则 4：每个 Base 写入后必须验证字段覆盖率
+
+写入完成后，抽样检查记录的字段覆盖率：
+
+```bash
+# 抽样 5 条，检查非空字段数
+lark-cli base +record-list --base-token <token> --table-id <table_id> --limit 5 --format json
+# 预期：每条记录至少 8 个字段有值（题干、题型、年级、学期、来源、页码、有确定解、难度）
+```
+
+如果大部分记录只有 3-5 个字段有值，说明 subagent prompt 缺少字段定义，必须回到 Step 3 模板检查。
+
+---
+
 ## 参考文件
 
 | 文件 | 内容 |
 |------|------|
 | `references/api-config.md` | PaddleOCR API 端点、认证、参数配置 |
-| `references/subagent-prompt.md` | prompt 模板（封面/TOC + 题目） |
+| `references/subagent-prompt.md` | prompt 模板（封面/TOC + 题目）— **Step 4 必须引用此文件** |
 | `references/block-types.md` | OCR 块类型说明和处理规则 |
-| `references/base-schema.md` | 飞书完整 Schema、建表命令、图片上传 |
+| `references/base-schema.md` | 飞书完整 Schema、建表命令、图片上传 — **batch 写入必须对照此文件** |
 | `references/lark-base-upload.md` | 写入流程与 CellValue 映射 |
 | `class-point.json` | 知识点标签选项（小学） |
 | `method.json` | 思想标签选项（小学+初中） |

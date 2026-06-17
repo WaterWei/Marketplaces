@@ -23,23 +23,32 @@ subagent 解析一页后，按以下映射构造写入数据：
 
 ### 题库表字段映射
 
-| Base 字段 | 数据来源 | CellValue |
-|-----------|---------|-----------|
-| `题干` | question_text | 字符串 |
-| `题型` | question_type | `"选择题"` / `"填空题"` / 等 |
-| `答案` | answer | 字符串或空 |
-| `有确定解` | has_determinable_answer | `true` / `false` |
-| `难度` | difficulty | `"★☆☆☆☆"` ~ `"★★★★★"` |
-| `知识点` | knowledge_points | 字符串数组 |
-| `知识点标签` | knowledge_point_tags | `["平行线","同旁内角"]` |
-| `思想标签` | method_tags | `["数形结合","分类讨论"]` |
-| `模型标签` | model_tags | `["直线、线段、交点或角的数量问题"]` |
-| `所属章节` | 章节映射 | `[{"id": "rec_chapter_xxx"}]` |
-| `年级` | meta.grade | 字符串 |
-| `学期` | meta.semester | 字符串 |
-| `来源` | pdf_name | 字符串 |
-| `页码` | source_page | 数字 |
-| `状态` | 固定值 | `"待审核"` |
+| Base 字段 | 数据来源 | CellValue | 格式说明 |
+|-----------|---------|-----------|---------|
+| `题干` | question_text | 字符串 | 含 LaTeX |
+| `题型` | question_type | `"选择题"` / `"填空题"` / 等 | |
+| `选项` | options | 字符串 | `"A. 40°\nB. 50°\nC. 60°\nD. 70°"`，非选择题填 null |
+| `答案` | answer | 字符串或空 | |
+| `解析` | analysis | 字符串 | 解题过程，无则留空 |
+| `有确定解` | has_determinable_answer | `true` / `false` | |
+| `难度` | difficulty | `"★☆☆☆☆"` ~ `"★★★★★"` | subagent 返回 1-5 数字，需转换为星级字符串 |
+| `知识点` | knowledge_points | 字符串数组 | |
+| `知识点标签` | knowledge_point_tags | 字符串数组 | 匹配 class-point.json 选项 |
+| `思想标签` | thinking_tags | 字符串数组 | 匹配 method.json 选项 |
+| `模型标签` | model_tags | 字符串数组 | 匹配 model.json 选项 |
+| `所属章节` | 章节映射 | `[{"id": "rec_chapter_xxx"}]` | 根据 section_title 匹配 |
+| `年级` | meta.grade | 字符串 | |
+| `学期` | meta.semester | 字符串 | |
+| `来源` | pdf_name | 字符串 | |
+| `页码` | source_page | 数字 | |
+| `状态` | 固定值 | `"待审核"` | |
+
+**难度转换规则**：subagent 返回数字 1-5，写入 Base 时转换为星级字符串：
+- 1 → `"★☆☆☆☆"`（基础）
+- 2 → `"★★☆☆☆"`（简单）
+- 3 → `"★★★☆☆"`（中等）
+- 4 → `"★★★★☆"`（较难）
+- 5 → `"★★★★★"`（压轴）
 
 ## 批量写入
 
@@ -76,12 +85,14 @@ lark-cli base +record-batch-create \
 
 ```json
 {
-  "fields": ["题干", "题型", "答案", "有确定解", "难度", "知识点", "知识点标签", "思想标签", "模型标签", "所属章节", "年级", "学期", "来源", "页码", "状态"],
+  "fields": ["题干", "题型", "选项", "答案", "解析", "有确定解", "难度", "知识点", "知识点标签", "思想标签", "模型标签", "所属章节", "年级", "学期", "来源", "页码", "状态"],
   "rows": [
     [
       "1. 如图，已知 $AB \\perp CD$...",
       "选择题",
+      "A. 40°\nB. 50°\nC. 60°\nD. 70°",
       "C",
+      "由 AB∥CD 知同位角相等，∠2=∠1=50°",
       true,
       "★★☆☆☆",
       ["垂线", "垂直定义"],
@@ -141,6 +152,28 @@ subagent 解析的 `question.images` 中的路径即此字典的 key。
 - **身份：** 所有操作使用 `--as user`
 - **串行写入：** 连续写入同一表时串行，批次间延迟 0.5-1 秒
 - **分批限制：** 单批 ≤200 条
+- **字段完整性：** 每次 batch 写入前必须验证 fields 列表包含全部必填字段
+
+### 写入前验证脚本
+
+```bash
+# 验证 batch JSON 字段完整性
+python3 -c "
+import json, sys
+REQUIRED = ['题干', '题型', '有确定解', '难度', '年级', '学期', '来源', '页码']
+RECOMMENDED = ['选项', '答案', '解析', '知识点', '知识点标签', '思想标签', '模型标签']
+batch = json.load(open(sys.argv[1]))
+fields = batch.get('fields', [])
+missing_req = [f for f in REQUIRED if f not in fields]
+missing_rec = [f for f in RECOMMENDED if f not in fields]
+if missing_req:
+    print(f'ERROR: missing required fields: {missing_req}')
+    sys.exit(1)
+if missing_rec:
+    print(f'WARNING: missing recommended fields: {missing_rec}')
+print(f'OK: {len(fields)} fields, {len(batch[\"rows\"])} rows')
+" batch_1.json
+```
 
 ## 参考
 

@@ -138,8 +138,8 @@ PDF 名称：{pdf_name}
 输出规则：
 1. 提取当前页每一道独立题目，每题一个对象
 2. id 格式为 "Q{current_page}_{序号}"（如 Q6_1, Q6_2）
-3. 对选择题：选项保留原格式，标出正确答案（若能推断）
-4. 对解答题/计算题：保留完整题干，answer 为 null
+3. 对选择题：提取完整选项文本到 options 字段（如 "A. 40°\nB. 50°\nC. 60°\nD. 70°"）
+4. 对解答题/计算题：保留完整题干，options 为 null
 5. question_text 保持原文，数学符号用 LaTeX 风格 $...$
 6. image 块保留为 <img src=\"...\"> 标签，放在对应题干的文本位置
 7. 空白页、目录页、封面页返回 []
@@ -149,6 +149,12 @@ PDF 名称：{pdf_name}
     - 结合题目文本、选项（若有）、图片内容综合理解
     - 如果能作为数学教师 confidently 确定正确答案 → true，并填入 answer
     - 如果缺少关键信息（如依赖未见过的图、条件不足、开放性答案）→ false，answer 留空
+11. 难度判断（difficulty）：1=基础识记、2=简单应用、3=中等综合、4=较难推理、5=压轴题
+12. 标签匹配（如果能从题目内容推断）：
+    - knowledge_point_tags：从 class-point.json 选项中匹配
+    - thinking_tags：从 method.json 选项中匹配
+    - model_tags：从 model.json 选项中匹配
+    - 无法匹配时返回空数组 []
 
 只返回 JSON 数组：
 [
@@ -156,13 +162,18 @@ PDF 名称：{pdf_name}
     "id": "Q6_1",
     "source_page": 6,
     "question_text": "...",
-    "images": ["imgs/img_in_image_box_...jpg"],
-    "answer": "C",
-    "knowledge_points": ["垂线", "垂直定义"],
     "question_type": "选择题",
+    "options": "A. 40°\nB. 50°\nC. 60°\nD. 70°",
+    "answer": "C",
+    "analysis": "由 AB∥CD 知同位角相等，∠2=∠1=50°",
+    "has_determinable_answer": true,
     "difficulty": 2,
+    "knowledge_points": ["垂线", "垂直定义"],
+    "knowledge_point_tags": ["垂线"],
+    "thinking_tags": ["数形结合"],
+    "model_tags": ["直线、线段、交点或角的数量问题"],
     "section_title": "知识点 1 垂直",
-    "has_determinable_answer": true
+    "images": ["imgs/img_in_image_box_...jpg"]
   }
 ]
 ```
@@ -171,3 +182,6 @@ PDF 名称：{pdf_name}
 - `section_title` 字段帮助后续匹配目录表中的章节
 - `images` 列表中的路径对应 PaddleOCR 返回的 `markdown.images` 的 key
 - `has_determinable_answer` 用于写入「有确定解」字段，subagent 需结合 OCR 图片和上下文综合判断
+- `options` 字段：选择题必须提取完整选项文本，非选择题填 null
+- `analysis` 字段：如果题目本身包含解析/解题过程则提取，否则留空
+- `knowledge_point_tags` / `thinking_tags` / `model_tags`：尽量从题目内容推断匹配预置选项，无法匹配返回空数组

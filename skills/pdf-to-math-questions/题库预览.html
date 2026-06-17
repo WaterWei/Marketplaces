@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>题库预览</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<style>
+:root {
+  --bg: #f5f5f7;
+  --card-bg: #fff;
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --border: #e5e5ea;
+  --accent: #007aff;
+  --accent-light: #e8f0fe;
+  --green: #34c759;
+  --orange: #ff9500;
+  --red: #ff3b30;
+  --purple: #af52de;
+  --radius: 12px;
+  --section-color: #f0f0f4;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Helvetica Neue", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding-bottom: 60px;
+}
+.container { max-width: 900px; margin: 0 auto; padding: 0 16px; }
+
+/* header */
+.header {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+  position: sticky; top: 0; z-index: 100;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255,255,255,0.85);
+}
+.header-inner {
+  max-width: 900px; margin: 0 auto; padding: 0 16px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.header h1 { font-size: 20px; font-weight: 600; white-space: nowrap; }
+.header .stats { font-size: 13px; color: var(--text-secondary); white-space: nowrap; }
+.header .total-progress {
+  flex: 1; min-width: 100px; height: 4px;
+  background: var(--border); border-radius: 2px; overflow: hidden;
+}
+.header .total-progress .bar {
+  height: 100%; background: var(--accent); border-radius: 2px;
+  transition: width 0.5s;
+}
+
+/* filters */
+.filters {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  padding: 12px 0 4px;
+  max-width: 900px; margin: 0 auto;
+  align-items: center;
+}
+.filters select, .filters input {
+  padding: 6px 10px; border: 1px solid var(--border);
+  border-radius: 8px; font-size: 14px; background: var(--card-bg);
+}
+.filters label {
+  font-size: 13px; color: var(--text-secondary);
+  display: flex; align-items: center; gap: 4px;
+}
+
+/* base section */
+.base-section {
+  margin: 16px 0;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.base-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.base-header:hover { background: var(--accent-light); }
+.base-header .arrow {
+  font-size: 12px; color: var(--text-secondary);
+  transition: transform 0.2s; flex-shrink: 0;
+}
+.base-header.collapsed .arrow { transform: rotate(-90deg); }
+.base-header .name { font-size: 16px; font-weight: 600; flex: 1; }
+.base-header .base-stats { font-size: 13px; color: var(--text-secondary); white-space: nowrap; }
+.base-body { }
+.base-body.collapsed { display: none; }
+
+/* page group */
+.page-group { margin: 0 18px 16px; }
+.page-header {
+  font-size: 14px; font-weight: 600; color: var(--text-secondary);
+  padding: 8px 0 4px; border-bottom: 1px solid var(--border);
+  margin-bottom: 8px; margin-top: 8px;
+}
+
+/* question card */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+}
+.card-meta {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 10px; font-size: 13px;
+}
+.card-seq { font-weight: 600; color: var(--text-secondary); min-width: 28px; }
+.type-badge {
+  display: inline-block; padding: 2px 10px; border-radius: 20px;
+  font-size: 12px; font-weight: 500;
+}
+.type-badge.选择题 { background: #e8f0fe; color: #0050b3; }
+.type-badge.填空题 { background: #fff3e0; color: #e65100; }
+.type-badge.解答题 { background: #fce4ec; color: #c62828; }
+.type-badge.计算题 { background: #f3e5f5; color: #6a1b9a; }
+.type-badge.应用题 { background: #e8f5e9; color: #1b5e20; }
+.difficulty { font-size: 14px; letter-spacing: 2px; }
+.card-text {
+  font-size: 16px; line-height: 1.8; margin-bottom: 10px;
+  white-space: pre-wrap; word-break: break-word;
+}
+.card-text .katex { font-size: 1.1em; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.tag {
+  font-size: 12px; padding: 2px 10px; border-radius: 20px;
+  background: var(--accent-light); color: var(--accent);
+}
+.tag.思想 { background: #f3e5f5; color: #6a1b9a; }
+.tag.模型 { background: #e0f2f1; color: #00695c; }
+.tag.知识点 { background: #fff3e0; color: #e65100; }
+.answer-section {
+  border-top: 1px solid var(--border); padding-top: 10px; margin-top: 6px;
+}
+.answer-toggle {
+  background: none; border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 16px; font-size: 13px;
+  color: var(--text-secondary); cursor: pointer;
+  transition: all 0.2s;
+}
+.answer-toggle:hover { border-color: var(--accent); color: var(--accent); }
+.answer-toggle.showing { background: var(--accent); color: #fff; border-color: var(--accent); }
+.answer-content { margin-top: 10px; display: none; font-size: 15px; line-height: 1.7; }
+.answer-content.visible { display: block; }
+.answer-content .label { font-weight: 600; color: var(--green); margin-right: 8px; }
+.answer-content .label.analysis { color: var(--purple); }
+.options-text {
+  font-size: 15px; line-height: 1.8; margin-bottom: 10px;
+  padding: 10px 14px; background: #f8f8fa; border-radius: 8px;
+  white-space: pre-wrap;
+}
+.base-source {
+  font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;
+}
+
+.loading, .error, .empty {
+  text-align: center; padding: 60px 20px; color: var(--text-secondary);
+}
+.loading .spinner {
+  display: inline-block; width: 20px; height: 20px;
+  margin-left: 8px; border: 2px solid var(--border);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin 0.8s linear infinite; vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media print {
+  .header { position: static; }
+  .answer-toggle { display: none; }
+  .answer-content { display: block !important; }
+  .base-header .arrow { display: none; }
+  .base-body.collapsed { display: block !important; }
+}
+@media (max-width: 600px) {
+  .card { padding: 14px; }
+  .header-inner { flex-direction: column; align-items: stretch; }
+  .header .total-progress { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <h1>题库预览</h1>
+    <div class="total-progress"><div class="bar" id="progressBar" style="width:0%"></div></div>
+    <span class="stats" id="stats">加载中</span>
+  </div>
+</div>
+
+<div class="container" id="filters"></div>
+<div class="container" id="loading"><div class="loading"><span class="spinner"></span></div></div>
+<div class="container" id="content"></div>
+
+<script>
+const API_BASE = '';
+const $ = id => document.getElementById(id);
+
+let allQuestions = [];
+let baseOrder = [];
+let filterType = '', filterDifficulty = '', hideNoAnswer = false, searchText = '';
+
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function noHTML(s) {
+  return s.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function renderMath(elt) {
+  if (!window.katex) return;
+  const walker = document.createTreeWalker(elt, NodeFilter.SHOW_TEXT, null, false);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  for (const node of nodes) {
+    let text = node.textContent;
+    let result = '', last = 0, start = -1;
+    for (let i = 0; i < text.length; i++) {
+      if (text[i] === '$') {
+        if (start >= 0) {
+          result += noHTML(text.slice(last, start));
+          const inline = text.slice(start + 1, i);
+          try {
+            result += katex.renderToString(inline, { throwOnError: false });
+          } catch(e) {
+            result += '$' + inline + '$';
+          }
+          last = i + 1;
+          start = -1;
+        } else {
+          start = i;
+        }
+      }
+    }
+    if (last === 0 && start < 0) continue;
+    result += noHTML(text.slice(last));
+    if (start >= 0) result += text.slice(start);
+    const span = document.createElement('span');
+    span.innerHTML = result;
+    node.parentNode.replaceChild(span, node);
+  }
+}
+
+function pickString(v) {
+  if (typeof v === 'string') return v;
+  if (Array.isArray(v) && v.length > 0) return String(v[0]);
+  return '';
+}
+
+function pickArray(v) {
+  return Array.isArray(v) ? v : [];
+}
+
+function pickBool(v) {
+  return v === true || v === false ? v : null;
+}
+
+function pickNumber(v) {
+  return typeof v === 'number' ? v : (parseInt(v) || 0);
+}
+
+function parseRecords(fields, rows) {
+  const idx = {};
+  for (let i = 0; i < fields.length; i++) {
+    idx[fields[i]] = i;
+  }
+  return rows.map((row, seq) => {
+    const v = name => row[idx[name]];
+    const q = { seq: seq + 1 };
+    q.stem = pickString(v('题干'));
+    q.type = pickString(v('题型'));
+    q.grade = pickString(v('年级'));
+    q.semester = pickString(v('学期'));
+    const src = pickString(v('来源'));
+    q.source = src;
+    const m = src.match(/^(.+?)(?:\s+第\d+页|$)/);
+    q._base = m ? m[1].trim() : src;
+    q.page = pickNumber(v('页码'));
+    q.options = pickString(v('选项'));
+    q.answer = pickString(v('答案'));
+    q.analysis = pickString(v('解析'));
+    q.determinate = pickBool(v('有确定解'));
+    q.difficulty = pickString(v('难度'));
+    q.kpTags = pickArray(v('知识点标签'));
+    q.thinkTags = pickArray(v('思想标签'));
+    q.modelTags = pickArray(v('模型标签'));
+    return q;
+  });
+}
+
+function init() {
+  fetch(`${API_BASE}/api/bases`)
+    .then(r => r.json())
+    .then(async basesMap => {
+      baseOrder = Object.keys(basesMap);
+      if (baseOrder.length === 0) {
+        $('content').innerHTML = '<div class="empty">未找到题库数据</div>';
+        $('stats').textContent = '0 题';
+        return;
+      }
+
+      const loaders = baseOrder.map(baseName =>
+        fetch(`${API_BASE}/api/questions/${encodeURIComponent(baseName)}`)
+          .then(r => r.json())
+          .then(data => {
+            if (data.error) { console.warn(baseName + ':', data.error); return []; }
+            const fields = data.fields || [];
+            const rows = data.records || [];
+            const qs = parseRecords(fields, rows);
+            qs.forEach(q => q._base = baseName);
+            return qs;
+          })
+          .catch(e => { console.warn(baseName + ' fetch error:', e); return []; })
+      );
+
+      const results = await Promise.all(loaders);
+      for (const qs of results) {
+        for (const q of qs) allQuestions.push(q);
+      }
+
+      $('loading').style.display = 'none';
+      if (allQuestions.length === 0) {
+        $('content').innerHTML = '<div class="empty">未找到题目数据</div>';
+        $('stats').textContent = '0 题';
+        return;
+      }
+      renderFilters();
+      applyFilters();
+    })
+    .catch(err => {
+      console.error('init error:', err);
+      $('content').innerHTML = `<div class="error">连接代理服务器失败: ${err.message}<br>请先启动: <code>python3 server.py</code>，然后打开 http://localhost:8899/题库预览.html</div>`;
+      $('stats').textContent = '错误';
+    });
+}
+
+function renderFilters() {
+  const types = new Set();
+  const diffs = new Set();
+  for (const q of allQuestions) {
+    if (q.type) types.add(q.type);
+    if (q.difficulty) diffs.add(q.difficulty);
+  }
+
+  let html = '<div class="filters">';
+  html += '<label>题型 <select id="filterType" onchange="applyFilters()"><option value="">全部</option>';
+  for (const t of [...types].sort()) html += `<option value="${t}">${t}</option>`;
+  html += '</select></label>';
+
+  html += '<label>难度 <select id="filterDifficulty" onchange="applyFilters()"><option value="">全部</option>';
+  const diffOrder = [...diffs].sort((a, b) => {
+    const an = a.startsWith('★') ? a.length : parseInt(a) || 0;
+    const bn = b.startsWith('★') ? b.length : parseInt(b) || 0;
+    return an - bn;
+  });
+  for (const d of diffOrder) html += `<option value="${d}">${d}</option>`;
+  html += '</select></label>';
+
+  html += '<label><input type="checkbox" id="hideNoAnswer" onchange="applyFilters()"> 仅显示有答案</label>';
+  html += '<label>搜索 <input type="text" id="searchText" placeholder="关键词..." style="width:120px" oninput="applyFilters()"></label>';
+  html += '</div>';
+  $('filters').innerHTML = html;
+}
+
+function applyFilters() {
+  filterType = $('filterType')?.value || '';
+  filterDifficulty = $('filterDifficulty')?.value || '';
+  hideNoAnswer = $('hideNoAnswer')?.checked || false;
+  searchText = ($('searchText')?.value || '').trim().toLowerCase();
+  renderQuestions();
+}
+
+function updateStats(filtered) {
+  const total = allQuestions.length;
+  const shown = filtered.length;
+  $('stats').textContent = shown < total ? `${shown} / ${total} 题` : `${total} 题`;
+  const pct = total > 0 ? (shown / total * 100) : 0;
+  $('progressBar').style.width = pct + '%';
+}
+
+function filterQuestions(list) {
+  let f = list;
+  if (filterType) f = f.filter(q => q.type === filterType);
+  if (filterDifficulty) f = f.filter(q => q.difficulty === filterDifficulty);
+  if (hideNoAnswer) f = f.filter(q => q.answer && q.answer.trim());
+  if (searchText) f = f.filter(q => q.stem.toLowerCase().includes(searchText) || (q.answer && q.answer.toLowerCase().includes(searchText)));
+  return f;
+}
+
+function renderQuestions() {
+  const allFiltered = filterQuestions(allQuestions);
+  updateStats(allFiltered);
+
+  if (allFiltered.length === 0) {
+    $('content').innerHTML = '<div class="empty">没有匹配的题目</div>';
+    return;
+  }
+
+  const byBase = {};
+  for (const q of allFiltered) {
+    const b = q._base || '其他';
+    if (!byBase[b]) byBase[b] = [];
+    byBase[b].push(q);
+  }
+
+  const container = $('content');
+  container.innerHTML = '';
+
+  for (const baseName of baseOrder) {
+    const qs = byBase[baseName];
+    if (!qs || qs.length === 0) continue;
+
+    const byPage = {};
+    for (const q of qs) {
+      const k = q.page || 0;
+      if (!byPage[k]) byPage[k] = [];
+      byPage[k].push(q);
+    }
+    const sortedPages = Object.keys(byPage).map(Number).sort((a, b) => a - b);
+
+    const section = document.createElement('div');
+    section.className = 'base-section';
+
+    const header = document.createElement('div');
+    header.className = 'base-header';
+    header.innerHTML = `<span class="arrow">▼</span><span class="name">${escapeHtml(baseName)}</span><span class="base-stats">${qs.length} 题</span>`;
+    header.dataset.collapsed = 'false';
+    header.onclick = () => {
+      const body = header.nextElementSibling;
+      const collapsed = body.classList.toggle('collapsed');
+      header.classList.toggle('collapsed', collapsed);
+      header.dataset.collapsed = collapsed ? 'true' : 'false';
+    };
+    section.appendChild(header);
+
+    const body = document.createElement('div');
+    body.className = 'base-body';
+
+    for (const page of sortedPages) {
+      const questions = byPage[page];
+      const pg = document.createElement('div');
+      pg.className = 'page-group';
+
+      const pgHeader = document.createElement('div');
+      pgHeader.className = 'page-header';
+      pgHeader.textContent = `第 ${page} 页（${questions.length} 题）`;
+      pg.appendChild(pgHeader);
+
+      for (const q of questions) {
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        const meta = document.createElement('div');
+        meta.className = 'card-meta';
+        meta.innerHTML = `<span class="card-seq">#${q.seq}</span>`;
+        if (q.type) meta.innerHTML += `<span class="type-badge ${q.type}">${q.type}</span>`;
+        if (q.difficulty) meta.innerHTML += `<span class="difficulty">${q.difficulty}</span>`;
+        if (q.determinate === false) meta.innerHTML += `<span style="font-size:12px;color:var(--orange);">⚠ 条件不足</span>`;
+        card.appendChild(meta);
+
+function renderStem(div, text, baseName) {
+  // Parse img tags from text and render inline
+  const parts = text.split(/(<img[^>]*>)/g);
+  for (const part of parts) {
+    const m = part.match(/<img\s+src="([^"]*)"/);
+    if (m) {
+      const src = m[1];
+      const filename = src.replace(/^.*\//, '');
+      const img = document.createElement('img');
+      img.src = `images/${baseName}/${filename}`;
+      img.loading = 'lazy';
+      img.style.cssText = 'max-width:300px;max-height:200px;margin:5px 0;display:block';
+      div.appendChild(img);
+    } else {
+      const span = document.createElement('span');
+      span.textContent = part;
+      div.appendChild(span);
+    }
+  }
+}
+
+        if (q.options && q.options.trim()) {
+          const opt = document.createElement('div');
+          opt.className = 'options-text';
+          opt.textContent = q.options;
+          card.appendChild(opt);
+        }
+
+        const tags = document.createElement('div');
+        tags.className = 'tags';
+        for (const t of q.kpTags) { const s = document.createElement('span'); s.className = 'tag 知识点'; s.textContent = t; tags.appendChild(s); }
+        for (const t of q.thinkTags) { const s = document.createElement('span'); s.className = 'tag 思想'; s.textContent = t; tags.appendChild(s); }
+        for (const t of q.modelTags) { const s = document.createElement('span'); s.className = 'tag 模型'; s.textContent = t; tags.appendChild(s); }
+        if (tags.children.length > 0) card.appendChild(tags);
+
+        const ansSection = document.createElement('div');
+        ansSection.className = 'answer-section';
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'answer-toggle';
+        toggleBtn.textContent = '显示答案';
+        toggleBtn.onclick = function() {
+          const content = this.nextElementSibling;
+          const showing = content.classList.toggle('visible');
+          this.textContent = showing ? '隐藏答案' : '显示答案';
+          this.classList.toggle('showing');
+          if (showing) renderMath(content);
+        };
+        ansSection.appendChild(toggleBtn);
+
+        const ansContent = document.createElement('div');
+        ansContent.className = 'answer-content';
+        if (q.answer && q.answer.trim()) ansContent.innerHTML += '<div><span class="label">答案</span>' + escapeHtml(q.answer) + '</div>';
+        if (q.analysis && q.analysis.trim()) ansContent.innerHTML += '<div><span class="label analysis">解析</span>' + escapeHtml(q.analysis) + '</div>';
+        ansSection.appendChild(ansContent);
+        card.appendChild(ansSection);
+
+        pg.appendChild(card);
+        requestAnimationFrame(() => renderMath(card));
+      }
+      body.appendChild(pg);
+    }
+    section.appendChild(body);
+    container.appendChild(section);
+  }
+}
+
+init();
+</script>
+</body>
+</html>
