@@ -142,15 +142,93 @@ automation. Honor hard HALTs, approval requirements, mandatory user
 checkpoints, and validation failures unless the checkpoint matches the explicit
 High-Autonomy Checkpoint Handling rules above.
 
+## Test Quality Gate
+
+After the **Develop story** step completes, the orchestrator MUST enforce a
+zero-skip, full-coverage quality gate. The pipeline does not accept skipped
+tests or sub-100% coverage. The orchestrator owns this check regardless of what
+the subagent reports.
+
+### Zero-Skipped-Test Enforcement
+
+1. Run the project's full test suite (infer the test command from project
+   structure — the same command the dev-story subagent should have used).
+2. Parse the test output for skipped tests (`skip`, `skipped`, `xit`, `xdescribe`,
+   `it.skip`, `test.skip`, `@unittest.skip`, `@pytest.mark.skip`, or equivalent
+   framework-specific skip markers).
+3. If **any** skipped test is detected:
+   - **HALT the pipeline.** Do not proceed to code review.
+   - Report: the exact count of skipped tests, which test files contain them,
+     and the skip reason if extractable.
+   - The pipeline is blocked until every skipped test is either unskipped
+     (implemented), removed, or explicitly justified as intentional by the user.
+   - Do NOT auto-accept or ignore skipped tests.
+
+### Full-Coverage Enforcement
+
+1. Run the project's coverage tool if one is configured (infer from
+   `package.json`, `pyproject.toml`, `Cargo.toml`, `build.gradle`, `Makefile`,
+   or project conventions).
+2. If the project has **no** coverage tooling configured, skip this check but
+   note it in the completion summary as a gap.
+3. If a coverage tool exists, run it and parse the coverage report. The target
+   is **100% line/branch coverage on all code changed or added by this story**.
+   At minimum, overall project coverage must not decrease.
+4. If coverage is below 100% on changed code:
+   - **HALT the pipeline.** Do not proceed to code review.
+   - Report: coverage percentage, uncovered lines/files, and a concrete
+     suggestion (e.g., "add tests for `src/auth/login.ts:42-58`").
+   - The pipeline is blocked until coverage reaches 100% on changed code, or
+     the user explicitly accepts the gap.
+
+### Quality Gate Decision
+
+After both checks pass (or the user explicitly overrides a failure), record a
+**quality-gate decision** in the story file's Dev Agent Record:
+
+```
+Quality Gate: PASS | OVERRIDDEN
+- Skipped tests: 0
+- Coverage (changed code): XX%
+- Decision: [auto-passed | user-override: <reason>]
+```
+
+## Residual Problem Escalation
+
+When the pipeline cannot resolve an issue automatically and a quality gate
+would otherwise be violated, the orchestrator MUST NOT silently accept the
+deficiency. Instead, escalate residual problems at the final report.
+
+### Escalation Rules
+
+1. **Collect** all unresolved issues across every pipeline step:
+   - Skipped tests that remain skipped
+   - Coverage gaps below 100% on changed code
+   - Code-review findings left as `decision-needed` or unresolved
+   - Traceability gaps (ACs without matching tests)
+   - Any validation gate that was user-overridden
+2. **Categorize** each issue:
+   - `BLOCKER`: should prevent merge/deploy (skipped tests, coverage < 100%,
+     unresolved HIGH review findings)
+   - `WARNING`: acceptable with user acknowledgment (unresolved MEDIUM findings,
+     missing coverage tooling)
+   - `INFO`: noted for awareness
+3. **Escalate** in the final completion report: present every residual problem
+   with its category, what it affects, and a concrete remediation action.
+4. **Do NOT transition** the story to `done` if any `BLOCKER` remains without
+   explicit user override. The pipeline must report `BLOCKER` items and stop.
+
 ## Failure Handling
 
-Stop at the first failed step. Do not run later steps or manually force status
-to `done`.
+Stop at the first failed step. This includes Test Quality Gate failures and
+any unmet subagent validation gates. Do not run later steps or manually force
+status to `done`.
 
 Report:
 
 - failed step and current story status
 - concrete error or unmet gate
+- test quality status (skipped count, coverage percentage) if applicable
 - artifacts already changed
 - the exact `$bmad-*` skill that can resume the failed step
 
@@ -161,12 +239,22 @@ Leave valid completed work intact.
 After all configured steps finish:
 
 1. Re-read sprint status and the story file.
-2. Verify the story is `done`, all required tasks are checked, and the
+2. Run the **final quality audit**:
+   - Confirm 0 skipped tests in the full suite.
+   - Confirm 100% coverage on changed code (or that coverage tooling absence
+     was documented as a `WARNING`).
+   - Confirm the traceability artifact contains a quality-gate decision.
+3. Collect and present all **residual problems** per the Residual Problem
+   Escalation rules above.
+4. Verify the story is `done`, all required tasks are checked, and the
    traceability artifact contains a gate decision.
-3. If code review did not transition the story to `done`, report the unmet
+5. If code review did not transition the story to `done`, report the unmet
    review gate and stop. Do not force the transition.
-4. Summarize completed steps, final status, test results, review result,
-   traceability gate, and key artifact paths.
+6. If any `BLOCKER`-category residual problem remains without user override,
+   report it prominently and stop. Do not silently mark the story complete.
+7. Summarize completed steps, final status, test results (skipped count,
+   coverage %), review result, traceability gate, residual problems, and key
+   artifact paths.
 
 Update status only through the nested BMAD workflows. Preserve YAML comments,
 ordering, and unrelated user changes.
