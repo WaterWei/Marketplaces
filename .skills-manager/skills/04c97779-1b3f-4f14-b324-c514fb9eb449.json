@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "04c97779-1b3f-4f14-b324-c514fb9eb449",
+  "path": "skills/doc-to-ppt-json",
+  "path_key": "skills/doc-to-ppt-json",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

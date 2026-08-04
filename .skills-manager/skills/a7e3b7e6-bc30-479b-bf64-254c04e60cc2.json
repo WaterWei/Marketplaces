@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "a7e3b7e6-bc30-479b-bf64-254c04e60cc2",
+  "path": "bunsh",
+  "path_key": "bunsh",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "b5e6624b-3dec-42a5-82a9-ea5c9fc6ad5f",
+  "path": "workers-best-practices",
+  "path_key": "workers-best-practices",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

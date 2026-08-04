@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "a050a0e9-0683-4856-bb8f-30e030fbbd54",
+  "path": "skills/content-creation-methodology",
+  "path_key": "skills/content-creation-methodology",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

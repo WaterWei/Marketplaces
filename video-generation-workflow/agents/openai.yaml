@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Generation Workflow"
+  short_description: "Plan and build AI video workflows."
+  default_prompt: "Use $video-generation-workflow to turn this idea or article into a code-driven video workflow."

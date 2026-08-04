@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "b51bde96-7559-4ebd-a0b9-86bcf6cb5230",
+  "path": "lark-contact",
+  "path_key": "lark-contact",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

@@ -8,3 +8,6 @@ docs/paddleocr/
 skills/pdf-to-math-questions/tmp_images/
 .agent/
 .agents/
+Thumbs.db
+*.tmp
+.skills-manager.lock

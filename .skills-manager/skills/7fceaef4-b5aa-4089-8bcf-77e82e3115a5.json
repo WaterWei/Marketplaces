@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "7fceaef4-b5aa-4089-8bcf-77e82e3115a5",
+  "path": "supabase-postgres-best-practices",
+  "path_key": "supabase-postgres-best-practices",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

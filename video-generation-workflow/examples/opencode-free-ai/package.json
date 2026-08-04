@@ -1,0 +1,10 @@
+{
+  "name": "video-opencode-free-ai",
+  "private": true,
+  "scripts": {
+    "render": "node generate-video.js"
+  },
+  "dependencies": {
+    "sharp": "^0.34.0"
+  }
+}

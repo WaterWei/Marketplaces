@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "90babaf0-50d5-4c3e-95a2-f28f6c091e33",
+  "path": "herdr",
+  "path_key": "herdr",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

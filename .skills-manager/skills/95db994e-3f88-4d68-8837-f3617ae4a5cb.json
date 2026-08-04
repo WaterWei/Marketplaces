@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "95db994e-3f88-4d68-8837-f3617ae4a5cb",
+  "path": "minimax-pdf",
+  "path_key": "minimax-pdf",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

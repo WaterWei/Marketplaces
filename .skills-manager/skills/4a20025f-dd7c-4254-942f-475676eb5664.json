@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "4a20025f-dd7c-4254-942f-475676eb5664",
+  "path": "mimo-v2-5-tts",
+  "path_key": "mimo-v2-5-tts",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

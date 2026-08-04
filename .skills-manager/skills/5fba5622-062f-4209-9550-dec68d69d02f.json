@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "5fba5622-062f-4209-9550-dec68d69d02f",
+  "path": "renwei-writing",
+  "path_key": "renwei-writing",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

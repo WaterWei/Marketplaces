@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "327f23fe-aecf-496a-b0ba-1250579de576",
+  "path": "skills/extract-questions",
+  "path_key": "skills/extract-questions",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

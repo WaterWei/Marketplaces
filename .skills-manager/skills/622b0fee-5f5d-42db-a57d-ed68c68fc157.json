@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "622b0fee-5f5d-42db-a57d-ed68c68fc157",
+  "path": "tmeet-skill",
+  "path_key": "tmeet-skill",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

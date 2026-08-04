@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "8de108f2-e3ce-4620-9a7c-409857913f87",
+  "path": "word-document-processor",
+  "path_key": "word-document-processor",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

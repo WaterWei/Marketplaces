@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "b37cb300-1ec8-47ff-82c4-1f57bce31a59",
+  "path": "skills/persona-water",
+  "path_key": "skills/persona-water",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

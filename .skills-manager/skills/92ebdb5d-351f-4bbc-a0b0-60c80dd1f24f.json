@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "92ebdb5d-351f-4bbc-a0b0-60c80dd1f24f",
+  "path": "skills/cc-story-pipeline",
+  "path_key": "skills/cc-story-pipeline",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

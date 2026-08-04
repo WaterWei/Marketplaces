@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "11e202e4-0d33-41c9-a527-f1636d0ae5f6",
+  "path": "uvsh",
+  "path_key": "uvsh",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "69816c34-fb48-4c33-ad69-343556efd674",
+  "path": "uv",
+  "path_key": "uv",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

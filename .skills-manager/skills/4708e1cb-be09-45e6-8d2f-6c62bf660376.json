@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "4708e1cb-be09-45e6-8d2f-6c62bf660376",
+  "path": "skills/thinking-framework",
+  "path_key": "skills/thinking-framework",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

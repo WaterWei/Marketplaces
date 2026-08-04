@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "43b7a5ee-9420-4cfb-8c90-01e7438c2ad7",
+  "path": "ctx",
+  "path_key": "ctx",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

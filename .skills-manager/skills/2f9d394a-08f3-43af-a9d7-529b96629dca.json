@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "2f9d394a-08f3-43af-a9d7-529b96629dca",
+  "path": "skills/pdf-to-math-questions",
+  "path_key": "skills/pdf-to-math-questions",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "e874be3c-f061-4262-bf99-40f20fc612e6",
+  "path": "skills/codex-story-pipeline",
+  "path_key": "skills/codex-story-pipeline",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}
