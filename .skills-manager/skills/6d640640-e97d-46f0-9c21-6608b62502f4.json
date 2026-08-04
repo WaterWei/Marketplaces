@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "6d640640-e97d-46f0-9c21-6608b62502f4",
+  "path": "baoyu-wechat-summary",
+  "path_key": "baoyu-wechat-summary",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/JimLiu/baoyu-skills",
+    "subpath": "skills/baoyu-wechat-summary",
+    "branch": null
+  }
+}

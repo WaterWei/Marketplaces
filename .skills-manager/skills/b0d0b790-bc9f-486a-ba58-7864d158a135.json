@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "b0d0b790-bc9f-486a-ba58-7864d158a135",
+  "path": "baoyu-translate",
+  "path_key": "baoyu-translate",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/JimLiu/baoyu-skills",
+    "subpath": "skills/baoyu-translate",
+    "branch": null
+  }
+}

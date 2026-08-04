@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "914ac699-a20f-4aeb-974c-0661242432c5",
+  "path": "baoyu-xhs-images",
+  "path_key": "baoyu-xhs-images",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/JimLiu/baoyu-skills",
+    "subpath": "skills/baoyu-xhs-images",
+    "branch": null
+  }
+}

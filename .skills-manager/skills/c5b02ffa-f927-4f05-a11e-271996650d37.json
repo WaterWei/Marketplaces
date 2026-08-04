@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "c5b02ffa-f927-4f05-a11e-271996650d37",
+  "path": "vercel-react-native-skills",
+  "path_key": "vercel-react-native-skills",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/vercel-labs/agent-skills",
+    "subpath": "skills/react-native-skills",
+    "branch": null
+  }
+}

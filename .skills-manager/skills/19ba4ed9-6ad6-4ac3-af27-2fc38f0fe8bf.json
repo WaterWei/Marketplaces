@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "19ba4ed9-6ad6-4ac3-af27-2fc38f0fe8bf",
+  "path": "baoyu-article-illustrator",
+  "path_key": "baoyu-article-illustrator",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/JimLiu/baoyu-skills",
+    "subpath": "skills/baoyu-article-illustrator",
+    "branch": null
+  }
+}

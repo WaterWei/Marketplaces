@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "a81f9ba5-2c03-45cc-a985-61c4b7d301e8",
+  "path": "baoyu-format-markdown",
+  "path_key": "baoyu-format-markdown",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/JimLiu/baoyu-skills",
+    "subpath": "skills/baoyu-format-markdown",
+    "branch": null
+  }
+}

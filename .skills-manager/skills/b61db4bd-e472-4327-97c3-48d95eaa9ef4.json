@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "b61db4bd-e472-4327-97c3-48d95eaa9ef4",
+  "path": "baoyu-comic",
+  "path_key": "baoyu-comic",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/JimLiu/baoyu-skills",
+    "subpath": "skills/baoyu-comic",
+    "branch": null
+  }
+}
