@@ -8,7 +8,7 @@
     "amp": true,
     "antigravity": true,
     "augment": true,
-    "claude_code": true,
+    "claude_code": false,
     "cline": true,
     "codebuddy": true,
     "codex": true,
@@ -24,7 +24,7 @@
     "mux": true,
     "neovate": true,
     "openclaw": true,
-    "opencode": true,
+    "opencode": false,
     "openhands": true,
     "pi": true,
     "pochi": true,
@@ -32,7 +32,7 @@
     "qwen_code": true,
     "trae_cn": true,
     "warp": true,
-    "workbuddy": true,
+    "workbuddy": false,
     "zencoder": true
   }
 }

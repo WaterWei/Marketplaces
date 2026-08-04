@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "a60b47d2-7a49-4200-9eb1-caeda5d27e8e",
+  "path": "remove-ai-flavor",
+  "path_key": "remove-ai-flavor",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}
